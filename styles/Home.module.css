@@ -110,6 +110,12 @@
   margin-left: 0.5rem;
 }
 
+.boardColumns {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;

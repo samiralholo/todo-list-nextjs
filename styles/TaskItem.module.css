@@ -1,0 +1,28 @@
+.taskItemContainer {
+  /* display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 24px;
+    gap: 8px; */
+  width: 335px;
+  height: 84px;
+  background: #ffffff;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.04), 0px 2px 6px rgba(0, 0, 0, 0.04),
+    0px 0px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  /* flex: none;
+    order: 1;
+    flex-grow: 0; */
+}
+
+.tasks_container_box_content {
+  width: 100%;
+}
+
+.itemHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
