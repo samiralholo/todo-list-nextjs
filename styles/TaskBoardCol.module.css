@@ -1,0 +1,36 @@
+.tasks_container_box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  gap: 24px;
+  width: 414px;
+  min-height: 334px;
+  height: auto;
+  left: 37px;
+  top: 265px;
+  background: #f8f9fa;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+}
+.tasks_container_box_content {
+  width: 100%;
+}
+
+.badge_line {
+  width: 8px;
+  height: 56px;
+  background: #f76568;
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+  margin-right: 10px;
+}
+
+.colHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
