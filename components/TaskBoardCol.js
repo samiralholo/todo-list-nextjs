@@ -6,8 +6,49 @@ import TaskBoardColStyles from "../styles/TaskBoardCol.module.css";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import { green } from "@mui/material/colors";
 import TaskItem from "./TaskItem";
+import * as React from "react";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import FormControl, { useFormControl } from "@mui/material/FormControl";
+import { useForm } from "react-hook-form";
+import InputLabel from "@mui/material/InputLabel";
+import { useAddTodoItemData } from "../hooks/useTodoListData";
 
 const TaskBoardCol = ({ columnData, tasksList }) => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [values, setValues] = React.useState({
+    title: "",
+    subject: "",
+  });
+
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const { mutate: addTodo } = useAddTodoItemData();
+
+  const handleAddTodoClick = () => {
+    const todo = values;
+    addTodo(todo);
+    setOpen(false);
+    setValues({
+      title: "",
+      subject: "",
+    });
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   return (
     <div>
       <Card
@@ -32,6 +73,7 @@ const TaskBoardCol = ({ columnData, tasksList }) => {
               <IconButton
                 aria-label="settings"
                 className={TaskBoardColStyles.addButton}
+                onClick={handleOpen}
               >
                 <AddTaskIcon
                   sx={{
@@ -52,6 +94,54 @@ const TaskBoardCol = ({ columnData, tasksList }) => {
           </div>
         </CardContent>
       </Card>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box className={TaskBoardColStyles.modalBox}>
+          <Typography
+            className={TaskBoardColStyles.modalTitle}
+            id="modal-modal-title"
+            variant="h4"
+            component="h2"
+          >
+            Add a New Task
+          </Typography>
+
+          <form
+            onSubmit={handleSubmit(handleAddTodoClick)}
+            className={TaskBoardColStyles.modalForm}
+          >
+            <FormControl fullWidth sx={{ m: 1 }}>
+              <TextField
+                id="title"
+                value={values.title}
+                onChange={handleChange("title")}
+                label="Title"
+              />
+            </FormControl>
+
+            <FormControl fullWidth sx={{ m: 1 }}>
+              <TextField
+                id="subject"
+                value={values.subject}
+                onChange={handleChange("subject")}
+                label="Subject"
+                multiline
+                rows={4}
+              />
+            </FormControl>
+
+            <FormControl className={TaskBoardColStyles.modalFormBtnSubmit}>
+              <Button type="submit" variant="contained" color="success">
+                Add
+              </Button>
+            </FormControl>
+          </form>
+        </Box>
+      </Modal>
     </div>
   );
 };
