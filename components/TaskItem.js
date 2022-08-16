@@ -13,6 +13,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
 import { useDeleteTodoItemData } from "../hooks/useTodoListData";
 
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import FormControl, { useFormControl } from "@mui/material/FormControl";
+import { useForm } from "react-hook-form";
+import InputLabel from "@mui/material/InputLabel";
+import { useEditTodoItemData } from "../hooks/useTodoListData";
+import TaskBoardColStyles from "../styles/TaskBoardCol.module.css";
+
 const TaskItem = ({ taskData }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -25,10 +35,40 @@ const TaskItem = ({ taskData }) => {
 
   const { mutate: deleteTodo } = useDeleteTodoItemData();
 
-  const handleAddTodoClick = (e) => {
+  const handleDeleteTodoClick = (e) => {
     deleteTodo(e.target.id);
     setAnchorEl(null);
   };
+
+  // Modal Code
+
+  const [openModal, setOpen] = React.useState(false);
+  const handleOpenModal = () => setOpen(true);
+  const handleCloseModal = () => setOpen(false);
+
+  const [values, setValues] = React.useState(taskData);
+
+  const handleChange = (prop) => (event) => {
+    setValues({ ...values, [prop]: event.target.value });
+  };
+
+  const { mutate: editTodo } = useEditTodoItemData();
+
+  const handleEditTodoClick = () => {
+    const todo = values;
+    editTodo(todo);
+    setOpen(false);
+    setValues({
+      title: "",
+      subject: "",
+    });
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   return (
     <div>
@@ -70,14 +110,14 @@ const TaskItem = ({ taskData }) => {
                 className={TaskItemStyles.menuItem}
                 key="delete"
                 id={taskData?._id}
-                onClick={handleAddTodoClick}
+                onClick={handleDeleteTodoClick}
               >
                 Delete <DeleteIcon sx={{ color: red[500] }} />
               </MenuItem>
               <MenuItem
                 className={TaskItemStyles.menuItem}
                 key="edit"
-                onClick={handleClose}
+                onClick={handleOpenModal}
               >
                 Edit <ModeIcon color="secondary" />
               </MenuItem>
@@ -85,6 +125,55 @@ const TaskItem = ({ taskData }) => {
           </div>
         </CardContent>
       </Card>
+
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box className={TaskBoardColStyles.modalBox}>
+          <Typography
+            className={TaskBoardColStyles.modalTitle}
+            id="modal-modal-title"
+            variant="h4"
+            component="h2"
+          >
+            Edit Task
+          </Typography>
+
+          <form
+            onSubmit={handleSubmit(handleEditTodoClick)}
+            className={TaskBoardColStyles.modalForm}
+          >
+            <FormControl fullWidth sx={{ m: 1 }}>
+              <TextField
+                id="title"
+                defaultValue={taskData?.title}
+                onChange={handleChange("title")}
+                label="Title"
+              />
+            </FormControl>
+
+            <FormControl fullWidth sx={{ m: 1 }}>
+              <TextField
+                id="subject"
+                defaultValue={taskData?.subject}
+                onChange={handleChange("subject")}
+                label="Subject"
+                multiline
+                rows={4}
+              />
+            </FormControl>
+
+            <FormControl className={TaskBoardColStyles.modalFormBtnSubmit}>
+              <Button type="submit" variant="contained" color="success">
+                Edit
+              </Button>
+            </FormControl>
+          </form>
+        </Box>
+      </Modal>
     </div>
   );
 };
