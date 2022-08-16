@@ -12,12 +12,12 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import FormControl, { useFormControl } from "@mui/material/FormControl";
+import FormControl from "@mui/material/FormControl";
 import { useForm } from "react-hook-form";
-import InputLabel from "@mui/material/InputLabel";
 import { useAddTodoItemData } from "../hooks/useTodoListData";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 
-const TaskBoardCol = ({ columnData, tasksList }) => {
+const TaskBoardCol = ({ columnData, tasksList, columnId }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -87,11 +87,50 @@ const TaskBoardCol = ({ columnData, tasksList }) => {
             ) : null}
           </div>
 
-          <div>
-            {tasksList?.map((task) => {
-              return <TaskItem key={task._id} taskData={task}></TaskItem>;
-            })}
-          </div>
+          <Droppable droppableId={columnId}>
+            {(droppableProvided, droppableSnapshot) => {
+              return (
+                <div
+                  ref={droppableProvided.innerRef}
+                  {...droppableProvided.droppableProps}
+                  style={{
+                    background: "#f8f9fa",
+                    padding: 0,
+                    width: "100%",
+                    minHeight: "200px",
+                    border: droppableSnapshot.isDraggingOver
+                      ? "1px dashed"
+                      : "none",
+                  }}
+                >
+                  {tasksList?.map((task, index) => {
+                    return (
+                      <Draggable
+                        key={task._id}
+                        draggableId={`${task._id}`}
+                        index={index}
+                      >
+                        {(draggableProvided, draggableSnapshot) => {
+                          return (
+                            <div
+                              ref={draggableProvided.innerRef}
+                              {...draggableProvided.draggableProps}
+                              {...draggableProvided.dragHandleProps}
+                            >
+                              <TaskItem
+                                key={task._id}
+                                taskData={task}
+                              ></TaskItem>
+                            </div>
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  })}
+                </div>
+              );
+            }}
+          </Droppable>
         </CardContent>
       </Card>
       <Modal
