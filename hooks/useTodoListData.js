@@ -75,3 +75,44 @@ export const useDeleteTodoItemData = () => {
     /**Optimistic Update End */
   });
 };
+
+const editTodoItem = (todoItem) => {
+  const editedTodo = {
+    title: todoItem.title,
+    subject: todoItem.subject,
+    status: todoItem.status,
+  };
+  return request({
+    url: `/todos/${todoItem._id}`,
+    method: "patch",
+    data: editedTodo,
+  });
+};
+
+export const useEditTodoItemData = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(editTodoItem, {
+    onMutate: async (newTodoItem) => {
+      await queryClient.cancelQueries("todo-list");
+      const previousTodoItemData = queryClient.getQueryData("todo-list");
+      queryClient.setQueryData("todo-list", (oldQueryData) => {
+        return {
+          ...oldQueryData,
+          data: [
+            ...oldQueryData.data,
+            { id: oldQueryData?.data?.length, ...newTodoItem },
+          ],
+        };
+      });
+      return { previousTodoItemData };
+    },
+    onError: (_err, _newTodoItem, context) => {
+      queryClient.setQueryData("todo-list", context.previousTodoItemData);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries("todo-list");
+    },
+    /**Optimistic Update End */
+  });
+};
