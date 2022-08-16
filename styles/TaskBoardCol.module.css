@@ -31,6 +31,12 @@
 .colHeader {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 25px;
+}
+
+.addButton {
+  margin-left: auto;
+  background: #4caf50;
+  height: 100%;
 }
