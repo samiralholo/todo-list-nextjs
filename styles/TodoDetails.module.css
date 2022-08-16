@@ -1,0 +1,74 @@
+.todoContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 80vw;
+  min-width: 70vw;
+}
+
+.todoBox {
+  width: 100%;
+  background: #f8f9fa;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  padding: 40px 30px !important;
+}
+
+.mainTitle {
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 65px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.08em;
+  color: #313131;
+  margin-bottom: 10px;
+}
+
+.prop {
+  margin-bottom: 4rem;
+}
+
+.prop:last-child {
+  margin-bottom: 0 !important;
+}
+
+.headingBox {
+  font-weight: 700;
+  font-size: 1.8rem;
+  line-height: 25px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.08em;
+}
+
+.detailsBox {
+  font-size: 1.3rem;
+  line-height: 25px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.04em;
+}
+
+.statusCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  margin-right: 30px;
+}
+
+.backBtn {
+  align-self: flex-end;
+  margin-top: 2rem;
+  width: 139px;
+  height: 45px;
+  background: #1695bd;
+  border-radius: 16px;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
