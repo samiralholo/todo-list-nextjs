@@ -1,10 +1,15 @@
 import { useState } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import TaskBoardCol from "../components/TaskBoardCol";
-// import { v4 as uuid } from "uuid";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useTodoListData } from "../hooks/useTodoListData";
+import { DragDropContext } from "react-beautiful-dnd";
+import dynamic from "next/dynamic";
+import { useEditTodoItemData } from "../hooks/useTodoListData";
+
+const TaskBoardCol = dynamic(() => import("../components/TaskBoardCol"), {
+  ssr: false,
+});
 
 const BOARD_COLUMNS = {
   ["todo"]: {
@@ -44,8 +49,27 @@ const BOARD_COLUMNS = {
 export default function Home() {
   const [columns, setColumns] = useState(BOARD_COLUMNS);
 
+  const { mutate: editTodo } = useEditTodoItemData();
+
+  const handleEditTodoClick = (todoId, newStatus) => {
+    const editedTodo = {
+      _id: todoId,
+      status: newStatus,
+    };
+    const todo = editedTodo;
+    editTodo(todo);
+  };
+
   const onSuccess = (data) => {
-    console.log({ data });
+    Object.entries(columns).map(([id, column], index) => {
+      setColumns({
+        ...columns,
+        [column.status]: {
+          ...column,
+          items: data?.data.filter((task) => task.status === column.status),
+        },
+      });
+    });
   };
 
   const onError = (error) => {
@@ -71,6 +95,44 @@ export default function Home() {
     }
   };
 
+  const onDragEnd = (result, columns, setColumns) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    handleEditTodoClick(result.draggableId, result.destination.droppableId);
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems,
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems,
+        },
+      });
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems,
+        },
+      });
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -82,15 +144,28 @@ export default function Home() {
         <h1 className={styles.title}>TODO List</h1>
 
         <div className={styles.boardColumns}>
-          {Object.entries(columns).map(([id, column], index) => {
-            return (
-              <TaskBoardCol
-                key={index}
-                columnData={column}
-                tasksList={getTasksListByStatus(column.status, data?.data)}
-              ></TaskBoardCol>
-            );
-          })}
+          <DragDropContext
+            onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+          >
+            {Object.entries(columns).map(([id, column], index) => {
+              // debugger;
+              // setColumns({
+              //   ...columns,
+              //   [column.status]: {
+              //     ...column,
+              //     items: getTasksListByStatus(column.status, data?.data),
+              //   },
+              // });
+              return (
+                <TaskBoardCol
+                  key={id}
+                  columnData={column}
+                  columnId={id}
+                  tasksList={getTasksListByStatus(column.status, data?.data)}
+                ></TaskBoardCol>
+              );
+            })}
+          </DragDropContext>
         </div>
       </main>
     </div>

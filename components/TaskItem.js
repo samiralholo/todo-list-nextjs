@@ -1,4 +1,7 @@
 import * as React from "react";
+import { forwardRef } from "react";
+import { useForm } from "react-hook-form";
+import FormControl from "@mui/material/FormControl";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -12,18 +15,15 @@ import MenuItem from "@mui/material/MenuItem";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
 import { useDeleteTodoItemData } from "../hooks/useTodoListData";
-
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import FormControl, { useFormControl } from "@mui/material/FormControl";
-import { useForm } from "react-hook-form";
-import InputLabel from "@mui/material/InputLabel";
 import { useEditTodoItemData } from "../hooks/useTodoListData";
 import TaskBoardColStyles from "../styles/TaskBoardCol.module.css";
 
-const TaskItem = ({ taskData }) => {
+// eslint-disable-next-line react/display-name
+const TaskItem = forwardRef(({ taskData, ref }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -71,7 +71,7 @@ const TaskItem = ({ taskData }) => {
   } = useForm();
 
   return (
-    <div>
+    <div ref={ref}>
       <Card className={TaskItemStyles.taskItemContainer} sx={{ minWidth: 275 }}>
         <CardContent className={TaskItemStyles.tasks_container_box_content}>
           <div className={TaskItemStyles.itemHeader}>
@@ -176,6 +176,6 @@ const TaskItem = ({ taskData }) => {
       </Modal>
     </div>
   );
-};
+});
 
 export default TaskItem;
