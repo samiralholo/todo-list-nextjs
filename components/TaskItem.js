@@ -11,6 +11,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
+import { useDeleteTodoItemData } from "../hooks/useTodoListData";
 
 const TaskItem = ({ taskData }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -19,6 +20,13 @@ const TaskItem = ({ taskData }) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const { mutate: deleteTodo } = useDeleteTodoItemData();
+
+  const handleAddTodoClick = (e) => {
+    deleteTodo(e.target.id);
     setAnchorEl(null);
   };
 
@@ -61,7 +69,8 @@ const TaskItem = ({ taskData }) => {
               <MenuItem
                 className={TaskItemStyles.menuItem}
                 key="delete"
-                onClick={handleClose}
+                id={taskData?._id}
+                onClick={handleAddTodoClick}
               >
                 Delete <DeleteIcon sx={{ color: red[500] }} />
               </MenuItem>
